@@ -65,14 +65,16 @@ workflows:
     publishing:
       email:
         recipients:
-          - your-email@example.com
+          - studiotae874@gmail.com
         notify:
           success: true
           failure: true
       
       app_store_connect:
-        # App Store Connectに自動アップロード
-        auth: integration
+        # App Store Connectに自動アップロード（環境変数を使用）
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         
         # TestFlightに提出
         submit_to_testflight: true
