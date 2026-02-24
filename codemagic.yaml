@@ -1,0 +1,130 @@
+workflows:
+  ios-release:
+    name: iOS Release
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.studio.tae
+      
+      vars:
+        # App Store Connect API Key
+        # Codemagicの環境変数で設定してください:
+        # APP_STORE_CONNECT_ISSUER_ID
+        # APP_STORE_CONNECT_KEY_IDENTIFIER
+        # APP_STORE_CONNECT_PRIVATE_KEY
+        # CERTIFICATE_PRIVATE_KEY (証明書用パスワード)
+        
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+      
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'release/*'
+          include: true
+          source: true
+    
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      
+      - name: Flutter analyze
+        script: |
+          flutter analyze
+      
+      - name: Flutter test
+        script: |
+          flutter test
+        ignore_failure: true
+      
+      - name: Build IPA
+        script: |
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_PRIVATE_KEY" "$BUNDLE_ID") + 1)) \
+            --export-options-plist=/Users/builder/export_options.plist
+    
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
+      
+      app_store_connect:
+        # App Store Connectに自動アップロード
+        auth: integration
+        
+        # TestFlightに提出
+        submit_to_testflight: true
+        
+        # 本番リリース（手動承認が必要）
+        # submit_to_app_store: true
+
+  ios-development:
+    name: iOS Development Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    
+    environment:
+      ios_signing:
+        distribution_type: development
+        bundle_identifier: com.studio.tae
+      
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'develop'
+          include: true
+          source: true
+        - pattern: 'main'
+          include: true
+          source: true
+    
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      
+      - name: Build iOS app
+        script: |
+          flutter build ios --debug --no-codesign
+    
+    artifacts:
+      - build/ios/iphoneos/*.app
+    
+    publishing:
+      email:
+        recipients:
+          - studiotae874@gmail.com
+        notify:
+          success: false
+          failure: true
