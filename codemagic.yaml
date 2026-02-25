@@ -11,6 +11,7 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.studio.tae
+        apple_id: studiotae874@gmail.com
       
       vars:
         BUNDLE_ID: "com.studio.tae"
