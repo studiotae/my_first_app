@@ -25,9 +25,14 @@ late String _apiKey;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // .env ファイルを読み込む
-  await dotenv.load(fileName: ".env");
-  _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+  // .env ファイルを読み込む（存在しない場合はスキップ）
+  try {
+    await dotenv.load(fileName: ".env");
+    _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+  } catch (e) {
+    debugPrint("⚠️ .env ファイルが見つかりません。APIキーが設定されていません。");
+    _apiKey = '';
+  }
   
   await MobileAds.instance.initialize();
 

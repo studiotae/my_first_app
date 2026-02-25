@@ -55,7 +55,6 @@ flutter:
   # ★ここに「アニメ画像」と「アイコン」を登録します
   # ※インデント（左のスペース）をこの通りに合わせてください
   assets:
-    - .env
     - assets/icon.png            # ← pngに変更しました！
     - assets/PC1.png     # ← アニメ画像1
     - assets/PC2.png     # ← アニメ画像2
