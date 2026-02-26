@@ -16,7 +16,7 @@ import 'ad_banner.dart';
 import 'anime/tae_animation.dart';
 import 'gemini_analyzer.dart'; 
 
-// .envファイルから API キーを読み込む
+// .envファイルまたは環境変数から API キーを読み込む
 late String _apiKey;
 
 // ---------------------------------------------------------
@@ -25,19 +25,31 @@ late String _apiKey;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // .env ファイルを読み込む（存在しない場合はスキップ）
-  try {
-    await dotenv.load(fileName: ".env");
-    _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-  } catch (e) {
-    debugPrint("⚠️ .env ファイルが見つかりません。APIキーが設定されていません。");
-    _apiKey = '';
+  // 1. ビルド時の環境変数から読み込む（Codemagic用）
+  const String buildTimeApiKey = String.fromEnvironment('GEMINI_API_KEY');
+  
+  if (buildTimeApiKey.isNotEmpty) {
+    // 環境変数から取得成功（Codemagicビルド）
+    _apiKey = buildTimeApiKey;
+    debugPrint("✅ APIキーを環境変数から取得しました");
+  } else {
+    // 2. .env ファイルを読み込む（ローカル開発用）
+    try {
+      await dotenv.load(fileName: ".env");
+      _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+      if (_apiKey.isNotEmpty) {
+        debugPrint("✅ APIキーを.envファイルから取得しました");
+      }
+    } catch (e) {
+      debugPrint("⚠️ .env ファイルが見つかりません");
+      _apiKey = '';
+    }
   }
   
   await MobileAds.instance.initialize();
 
   if (_apiKey.isEmpty) {
-    debugPrint("【警告】APIキーが設定されていません。.env ファイルを確認してください。");
+    debugPrint("【警告】APIキーが設定されていません");
   } else {
     debugPrint("✅ APIキー設定確認: ${_apiKey.substring(0, 10)}...${_apiKey.substring(_apiKey.length - 5)}");
   }
@@ -419,34 +431,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // フクロウのメッセージビルダー
   Widget _buildOwlMessage(String title, String message) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Image.asset('assets/start.png', height: 80), 
-            const SizedBox(width: 10),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.orange)),
-                    const SizedBox(height: 4),
-                    Text(message, style: const TextStyle(color: Colors.black87)),
-                  ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Image.asset('assets/start.png', height: 60), 
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title, 
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold, 
+                          fontSize: 14, 
+                          color: Colors.orange
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        message, 
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+          const SizedBox(height: 60), // スキップボタンとの間隔
+        ],
+      ),
     );
   }
 
