@@ -375,7 +375,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           color: Colors.black, 
           contents: [
             TargetContent(
-              align: ContentAlign.top, 
+              align: ContentAlign.top,
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 80, bottom: 10),
               builder: (context, controller) {
                 return _buildOwlMessage("① カメラでスキャン", "ここを押して資料を撮影してね。\nAIが自動で分類するよ！");
               },
@@ -388,7 +389,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           color: Colors.black, 
           contents: [
             TargetContent(
-              align: ContentAlign.top, 
+              align: ContentAlign.top,
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 80, bottom: 10),
               builder: (context, controller) {
                 return _buildOwlMessage("② ライブラリから追加", "スマホに入っている画像も\nここからまとめて追加できるよ。");
               },
@@ -401,7 +403,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           color: Colors.black, 
           contents: [
             TargetContent(
-              align: ContentAlign.bottom, 
+              align: ContentAlign.bottom,
+              padding: const EdgeInsets.only(top: 10, left: 20, right: 80, bottom: 20),
               builder: (context, controller) {
                 return _buildOwlMessage("③ ユーザー辞書", "キーワードを設定しておくと\nAIが優先的に振り分けてくれるよ！");
               },
@@ -414,7 +417,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           color: Colors.black, 
           contents: [
             TargetContent(
-              align: ContentAlign.top, 
+              align: ContentAlign.top,
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 80, bottom: 10),
               builder: (context, controller) {
                 return _buildOwlMessage("④ フォルダ作成・編集", "ここから手動でフォルダを作れるよ！\n\n【重要】\nフォルダを「長押し」すると\n名前の変更や削除ができるよ。");
               },
@@ -431,52 +435,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // フクロウのメッセージビルダー
   Widget _buildOwlMessage(String title, String message) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Image.asset('assets/start.png', height: 60), 
-              const SizedBox(width: 8),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title, 
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold, 
-                          fontSize: 14, 
-                          color: Colors.orange
-                        ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/start.png', height: 50), 
+            const SizedBox(width: 8),
+            Flexible(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 280),
+                padding: const EdgeInsets.all(12),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title, 
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold, 
+                        fontSize: 13, 
+                        color: Colors.orange,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        message, 
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                        ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      message, 
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontSize: 12,
+                        height: 1.4,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 60), // スキップボタンとの間隔
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
