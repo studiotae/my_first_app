@@ -3,17 +3,11 @@ import 'package:crypto/crypto.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'db_helper.dart';
 
-class GeminiAnalyzer {
+class DocumentAnalyzer {
   final String apiKey;
 
-  GeminiAnalyzer({required this.apiKey});
+  DocumentAnalyzer({required this.apiKey});
 
-  /// 単一のドキュメント画像を解析
-  /// 
-  /// - [file]: 解析対象の画像ファイル
-  /// - [previousResult]: 直前の解析結果（文脈学習用）
-  /// 
-  /// 戻り値: 「ドキュメント種別 / 科目名 / 詳細タグ / 時期情報」の形式
   Future<String> processSingleImage(
     File file, {
     String? previousResult,
@@ -48,17 +42,16 @@ class GeminiAnalyzer {
         GenerativeModel(model: 'gemini-3-flash-preview', apiKey: apiKey);
     final prompt = TextPart(
       "この画像は学習用ドキュメントです。ファイリングのために以下の情報を抽出してください。\n\n"
-      "出力フォーマット:\n"
-      "必ず以下の順序で、スラッシュ区切りで出力してください。\n"
+      "出力形式:\n"
+      "必ず以下の順序で出力してください。\n"
       "『ドキュメント種別 / 科目名 / 詳細タグ / 時期情報』\n"
       "（例: 試験用紙 / 熱力学 / 佐藤教授 / 2024年度）\n\n"
-      "抽出ルール:\n"
+      "抽出内容:\n"
       "1. ドキュメント種別(試験用紙/手書きノート/レポート/配布プリント)\n"
       "2. 科目名(不明な場合は『不明』)\n"
       "3. 詳細タグ(作成者優先、なければイベント名)\n"
       "4. 時期情報(年度や日付)\n\n"
-      "$dictText\n$contextText\n"
-      "回答は指定フォーマットの1行のみで出力してください。",
+      "$dictText\n$contextText\n",
     );
 
     try {
@@ -95,7 +88,7 @@ class GeminiAnalyzer {
       subject: subject,
       tag: tag,
       period: period,
-      content: "AI解析済み",
+      content: "解析済み",
       imagePath: imagePath,
       fileHash: fileHash,
     );
