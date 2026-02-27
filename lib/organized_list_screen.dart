@@ -28,7 +28,8 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
 
     Map<String, List<Map<String, dynamic>>> grouped = {};
     for (var doc in data) {
-      String title = doc['title'];
+      // データベースには'title'カラムは存在しない。'subject'（科目名）でグループ化
+      String title = doc['subject'] ?? '未分類';
       if (!grouped.containsKey(title)) {
         grouped[title] = [];
       }

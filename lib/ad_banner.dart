@@ -25,19 +25,27 @@ class _SimpleBannerAdState extends State<SimpleBannerAd> {
   }
 
   void _loadAd() {
+    debugPrint('========== 広告読み込み開始 ==========');
+    debugPrint('[Ad] Platform: ${Platform.isAndroid ? "Android" : "iOS"}');
+    debugPrint('[Ad] AdUnitId: $_adUnitId');
+    
     _bannerAd = BannerAd(
       adUnitId: _adUnitId,
       request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
+          debugPrint('[Ad] ✅ 広告読み込み成功');
           setState(() {
             _isLoaded = true;
           });
         },
         onAdFailedToLoad: (ad, err) {
-          // エラーが出たらログに出す（開発者用）
-          debugPrint('広告の読み込みに失敗: ${err.message}');
+          debugPrint('========== 広告読み込み失敗 ==========');
+          debugPrint('[Ad] ❌ エラーコード: ${err.code}');
+          debugPrint('[Ad] ❌ エラーメッセージ: ${err.message}');
+          debugPrint('[Ad] ❌ エラードメイン: ${err.domain}');
+          debugPrint('======================================');
           ad.dispose();
         },
       ),
