@@ -886,10 +886,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         label: "スキャン",
                         onTap: _isLoading ? () {} : () async {
                           try {
+                            debugPrint("[スキャン] 開始");
                             List<String>? paths = await CunningDocumentScanner.getPictures();
-                            if (paths != null) await _startAnalysis(paths.map((e) => File(e)).toList());
+                            debugPrint("[スキャン] 結果: $paths");
+                            if (paths != null && paths.isNotEmpty) {
+                              await _startAnalysis(paths.map((e) => File(e)).toList());
+                            } else {
+                              debugPrint("[スキャン] パスがnullまたは空");
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("スキャンがキャンセルされたか、画像が取得できませんでした")),
+                                );
+                              }
+                            }
                           } catch (e) {
-                            debugPrint("スキャンエラー: $e");
+                            debugPrint("[スキャン] エラー: $e");
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("スキャンエラー: $e")),
+                              );
+                            }
                           }
                         },
                       ),
@@ -1727,7 +1743,7 @@ class _TvDictionaryScreenState extends State<TvDictionaryScreen> {
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                               title: Text("『${rule['keyword']}』があれば", style: _glowingTextStyle.copyWith(fontSize: 18)),
-                              subtitle: Padding(padding: const EdgeInsets.only(top: 4), child: Text(" → 科目【${rule['subject']}】に入れる", style: TextStyle(color: _retroText.withOpacity(0.8), fontSize: 14))),
+                              subtitle: Padding(padding: const EdgeInsets.only(top: 4), child: Text(" → 科目【${rule['rule_subject']}】に入れる", style: TextStyle(color: _retroText.withOpacity(0.8), fontSize: 14))),
                               trailing: IconButton(icon: Icon(Icons.delete_outline, color: _retroText), onPressed: () => _deleteRule(rule['_id'])),
                             ),
                           );

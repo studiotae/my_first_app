@@ -8,6 +8,8 @@
 	<string>スキャンした画像やライブラリから画像を読み込むために使用します。</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>スキャンした画像を保存するために使用します。</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>ドキュメントスキャン機能で必要になる場合があります。</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-9798347852135431~1597104657</string>
 	<key>CFBundleDevelopmentRegion</key>
