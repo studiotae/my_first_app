@@ -420,7 +420,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               align: ContentAlign.top,
               padding: const EdgeInsets.only(top: 20, left: 20, right: 80, bottom: 10),
               builder: (context, controller) {
-                return _buildOwlMessage("④ フォルダ作成・編集", "ここから手動でフォルダを作れるよ！\n\n【重要】\nフォルダを「長押し」すると\n名前の変更や削除ができるよ。");
+                return _buildOwlMessage("④ フォルダ作成・編集", "ここから手動でフォルダを作れるよ！\n\nフォルダを長押しすると\n名前の変更や削除ができるよ。");
               },
             ),
           ],
@@ -695,40 +695,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       
       String result = await analyzer.processSingleImage(files[i], previousResult: lastResult);
       
-      // 【デバッグ】結果をダイアログ表示
-      if (mounted) {
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("📋 解析結果（デバッグ）"),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("ファイル: ${files[i].path.split('/').last}"),
-                  const SizedBox(height: 10),
-                  const Text("Gemini返答:", style: TextStyle(fontWeight: FontWeight.bold)),
-                  SelectableText(result),
-                  const SizedBox(height: 10),
-                  Text("パース結果:", style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ...result.split(" / ").asMap().entries.map((e) {
-                    final labels = ["ドキュメント種別", "科目名", "詳細タグ", "時期情報"];
-                    return Text("${labels[e.key]}: ${e.value}");
-                  }).toList(),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("続行"),
-              ),
-            ],
-          ),
-        );
-      }
-      
       if (!result.contains("エラー") && !result.contains("スキップ") && !result.contains("不明")) {
         lastResult = result;
       }
@@ -886,13 +852,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         label: "スキャン",
                         onTap: _isLoading ? () {} : () async {
                           try {
-                            debugPrint("[スキャン] 開始");
                             List<String>? paths = await CunningDocumentScanner.getPictures();
-                            debugPrint("[スキャン] 結果: $paths");
                             if (paths != null && paths.isNotEmpty) {
                               await _startAnalysis(paths.map((e) => File(e)).toList());
                             } else {
-                              debugPrint("[スキャン] パスがnullまたは空");
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text("スキャンがキャンセルされたか、画像が取得できませんでした")),
@@ -900,7 +863,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               }
                             }
                           } catch (e) {
-                            debugPrint("[スキャン] エラー: $e");
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("スキャンエラー: $e")),

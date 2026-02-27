@@ -42,7 +42,6 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
     });
   }
 
-  // ★メニューを表示する（名前変更 or 削除）
   void _showFolderMenu(BuildContext context, String folderName) {
     showDialog(
       context: context,
@@ -50,11 +49,10 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
         return SimpleDialog(
           title: Text('「$folderName」の操作'),
           children: [
-            // 1. 名前を変更するボタン
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context); // メニューを閉じる
-                _showRenameDialog(context, folderName); // 名前変更へ
+                Navigator.pop(context);
+                _showRenameDialog(context, folderName);
               },
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -67,11 +65,10 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
                 ),
               ),
             ),
-            // 2. 削除するボタン
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context); // メニューを閉じる
-                _confirmDeleteFolder(context, folderName); // 削除確認へ
+                Navigator.pop(context);
+                _confirmDeleteFolder(context, folderName);
               },
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -90,7 +87,6 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
     );
   }
 
-  // ★名前変更ダイアログ
   void _showRenameDialog(BuildContext context, String currentName) {
     final TextEditingController _controller = TextEditingController(text: currentName);
 
@@ -114,7 +110,7 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
                 final newName = _controller.text.trim();
                 if (newName.isNotEmpty && newName != currentName) {
                   await DBHelper.instance.renameFolder(currentName, newName);
-                  _loadDocuments(); // リスト更新
+                  _loadDocuments();
                   if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -131,7 +127,6 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
     );
   }
 
-  // ★削除確認ダイアログ
   void _confirmDeleteFolder(BuildContext context, String folderName) {
     showDialog(
       context: context,
@@ -148,7 +143,7 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () async {
                 await DBHelper.instance.deleteFolder(folderName);
-                _loadDocuments(); // リスト更新
+                _loadDocuments();
                 if (context.mounted) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -190,10 +185,9 @@ class _OrganizedListScreenState extends State<OrganizedListScreen> {
                             child: ListTile(
                               leading: const Icon(Icons.folder, color: Colors.amber, size: 50),
                               title: Text(folderName, style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text("${files.length} 枚のプリント\n(長押しでメニュー)"),
-                              trailing: const Icon(Icons.more_vert, size: 20, color: Colors.grey), // メニューっぽいアイコンに変更
+                              subtitle: Text("${files.length} 枚のプリント"),
+                              trailing: const Icon(Icons.more_vert, size: 20, color: Colors.grey),
                               
-                              // ★長押しでメニューを表示
                               onLongPress: () {
                                 _showFolderMenu(context, folderName);
                               },
