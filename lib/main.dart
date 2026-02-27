@@ -28,12 +28,12 @@ void main() async {
   if (buildTimeApiKey.isNotEmpty) {
     _apiKey = buildTimeApiKey;
   } else {
-    // 2. .env ファイルを読み込む（ローカル開発用）
-    try {
     try {
       await dotenv.load(fileName: ".env");
       _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
     } catch (e) {
+      _apiKey = '';
+    }
   }
   
   await MobileAds.instance.initialize();
