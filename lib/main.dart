@@ -8,15 +8,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
-// 自作ファイルのインポート
 import 'db_helper.dart';
 import 'ad_banner.dart';
 import 'anime/tae_animation.dart';
-import 'gemini_analyzer.dart'; 
+import 'gemini_analyzer.dart';
 
-// .envファイルまたは環境変数から API キーを読み込む
 late String _apiKey;
 
 // ---------------------------------------------------------
@@ -29,57 +26,17 @@ void main() async {
   const String buildTimeApiKey = String.fromEnvironment('GEMINI_API_KEY');
   
   if (buildTimeApiKey.isNotEmpty) {
-    // 環境変数から取得成功（Codemagicビルド）
     _apiKey = buildTimeApiKey;
-    debugPrint("✅ APIキーを環境変数から取得しました");
   } else {
     // 2. .env ファイルを読み込む（ローカル開発用）
     try {
+    try {
       await dotenv.load(fileName: ".env");
       _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-      if (_apiKey.isNotEmpty) {
-        debugPrint("✅ APIキーを.envファイルから取得しました");
-      }
     } catch (e) {
-      debugPrint("⚠️ .env ファイルが見つかりません");
-      _apiKey = '';
-    }
   }
   
   await MobileAds.instance.initialize();
-
-  if (_apiKey.isEmpty) {
-    debugPrint("【警告】APIキーが設定されていません");
-  } else {
-    debugPrint("✅ APIキー設定確認: ${_apiKey.substring(0, 10)}...${_apiKey.substring(_apiKey.length - 5)}");
-  }
-
-  // デバッグ: Android パッケージ情報を出力
-  if (Platform.isAndroid) {
-    try {
-      final deviceInfo = DeviceInfoPlugin();
-      final androidInfo = await deviceInfo.androidInfo;
-      debugPrint("========== Android パッケージ情報 ==========");
-      debugPrint("パッケージ名: ${androidInfo.id}");
-      debugPrint("ビルド: ${androidInfo.brand} ${androidInfo.model}");
-      debugPrint("Android: ${androidInfo.version.release} (API: ${androidInfo.version.sdkInt})");
-      debugPrint("【重要】Google Cloud Console で以下を確認:");
-      debugPrint("  ・API キー > アプリケーションの制限 > Android");
-      debugPrint("  ・パッケージ名が 「com.studio.tae」 か確認");
-      debugPrint("  ・SHA-1 フィンガープリントが正しいか確認");
-      debugPrint("  ・確認方法: keytool -list -v -keystore ~/.android/debug.keystore");
-      debugPrint("========================================");
-    } catch (e) {
-      debugPrint("デバイス情報取得エラー: $e");
-    }
-  }
-
-  // API キー有効性テスト（デバッグ用）
-  if (!_apiKey.isEmpty) {
-    debugPrint("\n【デバッグ】API キー有効性をテスト中...");
-    final analyzer = GeminiAnalyzer(apiKey: _apiKey);
-    await analyzer.testApiKey();
-  }
 
   runApp(const MyApp());
 }
