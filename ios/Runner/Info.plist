@@ -4,6 +4,10 @@
 <dict>
 	<key>NSCameraUsageDescription</key>
 	<string>過去問をスキャンするためにカメラを使用します。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>スキャンした画像やライブラリから画像を読み込むために使用します。</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>スキャンした画像を保存するために使用します。</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-9798347852135431~1597104657</string>
 	<key>CFBundleDevelopmentRegion</key>

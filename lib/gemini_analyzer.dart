@@ -101,9 +101,17 @@ class GeminiAnalyzer {
         [Content.multi([prompt, DataPart('image/jpeg', bytes)])],
       );
 
+      print("========== Gemini レスポンス詳細 ==========");
+      print("[Response] text: ${response.text}");
+      print("[Response] candidates: ${response.candidates?.length ?? 0}");
+      if (response.candidates != null && response.candidates!.isNotEmpty) {
+        print("[Response] first candidate: ${response.candidates!.first}");
+      }
+      print("==========================================");
+
       String result = response.text?.trim() ?? "不明 / 不明 / 不明 / 不明";
       result = result.replaceAll("\n", " ");
-      print("[Gemini] 判定結果: $result");
+      print("[Gemini] 判定結果（処理後）: $result");
 
       // 正規化されたDBに保存
       _parseAndSaveResult(result, file.path, hash);
@@ -133,11 +141,23 @@ class GeminiAnalyzer {
     String imagePath,
     String fileHash,
   ) async {
+    print("========== パース処理開始 ==========");
+    print("[Parse] 元の文字列: $result");
+    
     List<String> parts = result.split(" / ");
+    print("[Parse] 分割結果: $parts");
+    print("[Parse] パート数: ${parts.length}");
+    
     String docType = parts.isNotEmpty ? parts[0].trim() : "不明";
     String subject = parts.length > 1 ? parts[1].trim() : "不明";
     String tag = parts.length > 2 ? parts[2].trim() : "不明";
     String period = parts.length > 3 ? parts[3].trim() : "未設定";
+
+    print("[Parse] docType: $docType");
+    print("[Parse] subject: $subject");
+    print("[Parse] tag: $tag");
+    print("[Parse] period: $period");
+    print("========================================");
 
     await DBHelper.instance.insertDocument(
       docType: docType,
@@ -148,5 +168,7 @@ class GeminiAnalyzer {
       imagePath: imagePath,
       fileHash: fileHash,
     );
+    
+    print("[DB] 保存完了");
   }
 }
