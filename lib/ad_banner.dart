@@ -16,7 +16,7 @@ class _SimpleBannerAdState extends State<SimpleBannerAd> {
   // ★これで自動的に「Android」と「iOS」を判別してIDを切り替えます
   final String _adUnitId = Platform.isAndroid
       ? 'ca-app-pub-9798347852135431/8804016579' // Android本番用
-      : 'ca-app-pub-9798347852135431/8804016579'; // iOS本番用（同じIDを使用）
+      : 'ca-app-pub-9798347852135431/2105534835'; // iOS本番用
 
   @override
   void initState() {

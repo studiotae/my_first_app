@@ -695,6 +695,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
       
       String result = await analyzer.processSingleImage(files[i], previousResult: lastResult);
       
+      // 【デバッグ】結果をダイアログ表示
+      if (mounted) {
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("📋 解析結果（デバッグ）"),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("ファイル: ${files[i].path.split('/').last}"),
+                  const SizedBox(height: 10),
+                  const Text("Gemini返答:", style: TextStyle(fontWeight: FontWeight.bold)),
+                  SelectableText(result),
+                  const SizedBox(height: 10),
+                  Text("パース結果:", style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ...result.split(" / ").asMap().entries.map((e) {
+                    final labels = ["ドキュメント種別", "科目名", "詳細タグ", "時期情報"];
+                    return Text("${labels[e.key]}: ${e.value}");
+                  }).toList(),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("続行"),
+              ),
+            ],
+          ),
+        );
+      }
+      
       if (!result.contains("エラー") && !result.contains("スキップ") && !result.contains("不明")) {
         lastResult = result;
       }
