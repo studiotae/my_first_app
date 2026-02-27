@@ -442,9 +442,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final data = await DBHelper.instance.queryAllRows();
     Map<String, int> map = {};
     for (var item in data) {
-      String fullTitle = item['title'] ?? "不明 / 不明 / 不明 / 不明";
-      List<String> parts = fullTitle.split(" / ");
-      String subject = (parts.length >= 2) ? parts[1] : "不明";
+      String subject = item[DBHelper.columnSubject] ?? "不明";
       map[subject] = (map[subject] ?? 0) + 1;
     }
     setState(() { 
@@ -468,9 +466,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _deleteSubject(String subjectName) async {
     final allRows = await DBHelper.instance.queryAllRows();
     for (var row in allRows) {
-       String fullTitle = row['title'] ?? "";
-       List<String> parts = fullTitle.split(" / ");
-       String subject = (parts.length >= 2) ? parts[1] : "不明";
+       String subject = row[DBHelper.columnSubject] ?? "";
        if (subject == subjectName) {
          await DBHelper.instance.delete(row[DBHelper.columnId]);
        }
@@ -927,10 +923,8 @@ class _TagListScreenState extends State<TagListScreen> {
     final allRows = await DBHelper.instance.queryAllRows();
     Map<String, int> map = {};
     for (var row in allRows) {
-      String fullTitle = row['title'] ?? "";
-      List<String> parts = fullTitle.split(" / ");
-      String subject = (parts.length >= 2) ? parts[1] : "不明";
-      String tag = (parts.length >= 3) ? parts[2] : "不明";
+      String subject = row[DBHelper.columnSubject] ?? "";
+      String tag = row[DBHelper.columnTag] ?? "不明";
       if (subject == widget.subjectName) map[tag] = (map[tag] ?? 0) + 1;
     }
     setState(() => _tagFolders = map);
@@ -954,10 +948,8 @@ class _TagListScreenState extends State<TagListScreen> {
   Future<void> _deleteTag(String tagRaw) async {
     final allRows = await DBHelper.instance.queryAllRows();
     for (var row in allRows) {
-       String fullTitle = row['title'] ?? "";
-       List<String> parts = fullTitle.split(" / ");
-       String subject = (parts.length >= 2) ? parts[1] : "不明";
-       String tag = (parts.length >= 3) ? parts[2] : "不明";
+       String subject = row[DBHelper.columnSubject] ?? "";
+       String tag = row[DBHelper.columnTag] ?? "";
        
        if (subject == widget.subjectName && tag == tagRaw) {
          await DBHelper.instance.delete(row[DBHelper.columnId]);
@@ -1164,11 +1156,9 @@ class _DateListScreenState extends State<DateListScreen> {
     final allRows = await DBHelper.instance.queryAllRows();
     Map<String, int> map = {};
     for (var row in allRows) {
-      String fullTitle = row['title'] ?? "";
-      List<String> parts = fullTitle.split(" / ");
-      String subject = (parts.length >= 2) ? parts[1] : "不明";
-      String tag = (parts.length >= 3) ? parts[2] : "不明";
-      String date = (parts.length >= 4) ? parts[3] : "不明";
+      String subject = row[DBHelper.columnSubject] ?? "";
+      String tag = row[DBHelper.columnTag] ?? "";
+      String date = row[DBHelper.columnPeriod] ?? "不明";
       if (subject == widget.subjectName && tag == widget.tagName) map[date] = (map[date] ?? 0) + 1;
     }
     setState(() => _dateFolders = map);
@@ -1193,11 +1183,9 @@ class _DateListScreenState extends State<DateListScreen> {
   Future<void> _deleteDate(String dateRaw) async {
     final allRows = await DBHelper.instance.queryAllRows();
     for (var row in allRows) {
-       String fullTitle = row['title'] ?? "";
-       List<String> parts = fullTitle.split(" / ");
-       String subject = (parts.length >= 2) ? parts[1] : "不明";
-       String tag = (parts.length >= 3) ? parts[2] : "不明";
-       String date = (parts.length >= 4) ? parts[3] : "不明";
+       String subject = row[DBHelper.columnSubject] ?? "";
+       String tag = row[DBHelper.columnTag] ?? "";
+       String date = row[DBHelper.columnPeriod] ?? "";
        
        if (subject == widget.subjectName && tag == widget.tagName && date == dateRaw) {
          await DBHelper.instance.delete(row[DBHelper.columnId]);
@@ -1405,11 +1393,9 @@ class _FinalGalleryScreenState extends State<FinalGalleryScreen> {
     if (!mounted) return;
     setState(() { 
       _images = all.where((e) {
-        String fullTitle = e['title'] ?? "";
-        List<String> parts = fullTitle.split(" / ");
-        String s = (parts.length >= 2) ? parts[1] : "不明";
-        String t = (parts.length >= 3) ? parts[2] : "不明";
-        String d = (parts.length >= 4) ? parts[3] : "不明";
+        String s = e[DBHelper.columnSubject] ?? "";
+        String t = e[DBHelper.columnTag] ?? "";
+        String d = e[DBHelper.columnPeriod] ?? "";
         return s == widget.subjectName && t == widget.tagName && d == widget.dateInfo;
       }).toList(); 
     });
